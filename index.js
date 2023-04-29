@@ -1,25 +1,13 @@
+let url ="https://jsonplaceholder.typicode.com/users"
+fetch(url)
+.then (response => response.json())
+.then(data => mostrarData(data))
+.catch(error =>console.log(error))
 
- function getCharacter (done) {
-    const results = fetch("https://rickandmortyapi.com/api/character")
-    results
-    .then(response => response.json())
-    .then(data => {
-        done(data)
-    })
- }
-
- getCharacter(data => {
-    data.results.forEach(personaje => {
-        const article = document.createRange().createContextualFragment(
-`
-          <article>
-            <div class="image-content">
-                <img src="${personaje.image}"  alt="${personaje.name}">
-            </div>
-            <h2>${personaje.name} </h2>
-            <span>${personaje.status} </span>
-        </article> `);
-            const main = document.querySelector("main");
-        main.appendChild(article)
-    });
- })
+const mostrarData = (data) =>{
+    let body =""
+    for (let i = 0; i < data.length; i++) {
+        body += ` <tr><td>${data[i].id}</td></tr> <tr><td>${data[i].name}</td></tr>  <tr><td>${data[i].email}</td></tr>  `   
+    }
+    document.getElementById("data").innerHTML = body
+}
