@@ -1,50 +1,68 @@
 
-const url = "https://pokeapi.co/api/v2/pokemon/?limit=10&offset=10";
-const main = document.querySelector("main");
-const next = document.getElementsByClassName("next");
-const prev = document.getElementsByClassName("prev")
-
-function getPokemon() {
-    fetch(url)
-    .then(resp => resp.json())
-    .then(data =>{
-    })
-//tengo que pensar como realizar esta parte, para que sea enviada a getMoreData
+const main = document.querySelector(".pokemon-container")
+const prev = document.getElementById("previous");
+const next = document.getElementById("next");
+const spinner = document.querySelector("#spinner") 
+const submit =document.querySelector(".submit")
+let offset = 1
+var limit = 8
+prev.addEventListener("click",()=>{
+   if (offset !=1) {
+    offset -=9
+    removeChildNodes(main)
+    selectPokemon(offset,limit)
+   }
+})
+next.addEventListener("click",()=>{
+    offset += 9
+    removeChildNodes(main)
+    selectPokemon(offset,limit)
+})
+function getPokemon(id) {
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
+        .then((resp) => resp.json())
+        .then((data) =>{ createdPokemon(data);
+        spinner.style.display = "none";
+    });
 }
-function getMoreData() {
-    
+function selectPokemon(offset,limit) {
+    spinner.style.display = "block";
+    for (let i = offset; i <= offset + limit; i++) {
+        getPokemon(i)
+    }
 }
-function createdPokemon(){
-for (let i = 0; i < data.length; i++) {
+function createdPokemon(pokemon) {
     let newImage = document.createElement("img");
-    newImage.setAttribute("src", `${data[i].results.sprites.front_default}`)
+    newImage.setAttribute("src", `${pokemon.sprites.front_default}`)
     let txt = document.createElement("h1")
-    txt.textContent = `${data[i].results.name}`
+    txt.textContent = `${pokemon.name}`
     let id = document.createElement("span")
-    id.textContent = `#${[i]}`
-    main.appendChild(newImage);
-    main.appendChild(txt)
-    main.appendChild(id)
+    id.textContent = `#${pokemon.id.toString().padStart(3, 0)}`;
+    main.append(newImage);
+    main.append(txt)
+    main.append(id)
 }
+function removeChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild)
+    }
 }
-function nextPag() {
-    next.addEventListener("click",function(){
-        data.next += 10;
-    })
-}
-function prevPag() {
-    prev.addEventListener("click", function(){
-        data.prev -= 10;
-    })
-}
-getPokemon()
+
+
 
 /* enlace al video de pokemon que muestra como hacerlo https://www.youtube.com/watch?v=59Jq_T7G4y4
-estructura que quiero necesita: funciones
-1 una funcion que haga que cuando buscamos un pokemon este aparesca. En esta tenemos que hacer que se eliminen todos los demas pokemones
-2 una funcion que haga que cuando le damos a next pase a la siguiente linea
-3 una funcion que haga que cuando le damos a prev valla a la anterior linea. Este solo aparece cuando pasamos la primer pagina
-4 una funcion que cree las imagenes de los pokemones con sus datos
+
+
+queda hacer la busqueda de pokemon, maquetar bien la pagina.
+
+
+
+6 una funcion que cree las imagenes de los pokemones con sus datos
+7 cuando clickeamos en un pokemon en particular, mostrar solo los datos de este nada mas.
+
+
+
+
 
 la api al buscar un array de los pokemones lo que hace es devolver solo dos datos, 1 es el nombre del pokemon y el 2 es la url donde estan todos los datos que hay de ese 
 pokemon en particular, es decir que yo debo realizar un doble fetch para poder obtener todos los datos de los pokemones
@@ -54,6 +72,8 @@ la logica deberia ser que
 
 
 
+1tenemos la los datos que nos trae fech en donde cada pokemon tiene un enlace a su id,
+pero, para ingresar acada pokemon, tenemos que primero ir a ese id en particular, y un bucle nos tiene que devolver ese url
 
-
+el url esta en results[].url
 */
