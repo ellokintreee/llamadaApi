@@ -2,35 +2,35 @@
 const main = document.querySelector(".pokemon-container")
 const prev = document.getElementById("previous");
 const next = document.getElementById("next");
-const spinner = document.querySelector("#spinner") 
-const submit =document.querySelector(".submit")
+const spinner = document.querySelector("#spinner")
+const submit = document.querySelector("#submit")
+const text = document.querySelector("#sub")
 let offset = 1
-var limit = 8
-prev.addEventListener("click",()=>{
-   if (offset !=1) {
-    offset -=9
-    removeChildNodes(main)
-    selectPokemon(offset,limit)
-   }
-})
-next.addEventListener("click",()=>{
-    offset += 9
-    removeChildNodes(main)
-    selectPokemon(offset,limit)
-})
+var limit = 2
+
+//obtenemos los datos desde la api
 function getPokemon(id) {
     fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`)
         .then((resp) => resp.json())
-        .then((data) =>{ createdPokemon(data);
-        spinner.style.display = "none";
-    });
+        .then((data) => {
+            createdPokemon(data);
+            spinner.style.display = "none";
+
+        });
 }
-function selectPokemon(offset,limit) {
+
+
+//nos da el array con los pokemones 
+function selectPokemon(offset, limit) {
     spinner.style.display = "block";
     for (let i = offset; i <= offset + limit; i++) {
         getPokemon(i)
     }
 }
+
+
+
+//crea las imagenes y nombres de los pokemones dados
 function createdPokemon(pokemon) {
     let newImage = document.createElement("img");
     newImage.setAttribute("src", `${pokemon.sprites.front_default}`)
@@ -42,11 +42,42 @@ function createdPokemon(pokemon) {
     main.append(txt)
     main.append(id)
 }
+
+
+//elimina los pokemones que en el momento no estan siendo seleccionados
 function removeChildNodes(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild)
     }
 }
+
+
+//realizar la busqueda
+
+submit.addEventListener("click", (e) => {
+    e.preventDefault();
+    removeChildNodes(main)
+    getPokemon(sub.value);
+
+})
+
+
+
+
+
+// pasar pagina anterior y siguiente
+prev.addEventListener("click", () => {
+    if (offset != 1) {
+        offset -= 9
+        removeChildNodes(main)
+        selectPokemon(offset, limit)
+    }
+})
+next.addEventListener("click", () => {
+    offset += 9
+    removeChildNodes(main)
+    selectPokemon(offset, limit)
+})
 
 
 
@@ -76,4 +107,10 @@ la logica deberia ser que
 pero, para ingresar acada pokemon, tenemos que primero ir a ese id en particular, y un bucle nos tiene que devolver ese url
 
 el url esta en results[].url
+
+
+para realizar la BUSQUEDA de pokemones necesitamos
+1- para el envio del submit.
+2-hacer que al ingresar el nombre del pokemon se empareje con el nombre de la base de datos
+.
 */
